@@ -1,11 +1,9 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-export default function AddTopic() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+export default function EditTopicForm({ topic }) {
+  const [title, setTitle] = useState(topic.title);
+  const [description, setDescription] = useState(topic.description);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -16,13 +14,16 @@ export default function AddTopic() {
     }
 
     try {
-      await fetch("http://localhost:3000/api/topics", {
-        method: "post",
+      await fetch(`http://localhost:3000/api/topics/${topic.id}`, {
+        method: "put",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ title, description }),
       });
+      router.refresh();
       router.push("/");
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -45,7 +46,7 @@ export default function AddTopic() {
         type="submit"
         className="bg-green-600 font-bold text-white py-3 px-6 w-fit"
       >
-        Add Topic
+        Update Topic
       </button>
     </form>
   );
